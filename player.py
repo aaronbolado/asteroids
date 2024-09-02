@@ -7,7 +7,8 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
-        self.timer = 0
+        self.shoot_timer = 0
+        self.shotgun_timer = 0
     
     # in the player class
     def triangle(self):
@@ -36,10 +37,14 @@ class Player(CircleShape):
         if keys[pygame.K_s]:
             self.move(-dt)
         if keys[pygame.K_SPACE]:
-            if self.timer <= 0:
+            if self.shoot_timer <= 0:
                 self.shoot()
-        
-        self.timer -= dt
+        if keys[pygame.K_f]:
+            if self.shotgun_timer <= 0:
+                self.shotgun()
+
+        self.shotgun_timer -= dt
+        self.shoot_timer -= dt
     
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -48,4 +53,17 @@ class Player(CircleShape):
     def shoot(self):
         bullet = Shot(self.position.x, self.position.y)
         bullet.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
-        self.timer = PLAYER_SHOOT_COOLDOWN
+        self.shoot_timer = PLAYER_SHOOT_COOLDOWN
+    
+    def shotgun(self):
+        bullet1 = Shot(self.position.x, self.position.y)
+        bullet1.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
+        bullet2 = Shot(self.position.x, self.position.y)
+        bullet2.velocity = pygame.Vector2(0,1).rotate(self.rotation - 10) * PLAYER_SHOOT_SPEED
+        bullet3 = Shot(self.position.x, self.position.y)
+        bullet3.velocity = pygame.Vector2(0,1).rotate(self.rotation - 20) * PLAYER_SHOOT_SPEED
+        bullet4 = Shot(self.position.x, self.position.y)
+        bullet4.velocity = pygame.Vector2(0,1).rotate(self.rotation + 10) * PLAYER_SHOOT_SPEED
+        bullet5 = Shot(self.position.x, self.position.y)
+        bullet5.velocity = pygame.Vector2(0,1).rotate(self.rotation + 20) * PLAYER_SHOOT_SPEED
+        self.shotgun_timer = PLAYER_SHOTGUN_COOLDOWN
