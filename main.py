@@ -3,8 +3,10 @@ import pygame_menu
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from bufffield import BuffField
 from shot import Shot
 from constants import *
+from buffs import *
 
 # Initialize pygame
 pygame.init()
@@ -48,16 +50,20 @@ def game_loop():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    buffs = pygame.sprite.Group()
 
     # Must use containers on the class itself before creating object
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
+    AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
+    Shield.containers = (buffs, updatable, drawable)
+    BuffField.containers = updatable
 
     # Create player object
     player = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
     asteroid_field = AsteroidField()
+    buff_field = BuffField()
 
     while True:
         for event in pygame.event.get():
