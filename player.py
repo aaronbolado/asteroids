@@ -56,14 +56,10 @@ class Player(CircleShape):
         self.shoot_timer = PLAYER_SHOOT_COOLDOWN
     
     def shotgun(self):
-        bullet1 = Shot(self.position.x, self.position.y)
-        bullet1.velocity = pygame.Vector2(0,1).rotate(self.rotation) * PLAYER_SHOOT_SPEED
-        bullet2 = Shot(self.position.x, self.position.y)
-        bullet2.velocity = pygame.Vector2(0,1).rotate(self.rotation - 10) * PLAYER_SHOOT_SPEED
-        bullet3 = Shot(self.position.x, self.position.y)
-        bullet3.velocity = pygame.Vector2(0,1).rotate(self.rotation - 20) * PLAYER_SHOOT_SPEED
-        bullet4 = Shot(self.position.x, self.position.y)
-        bullet4.velocity = pygame.Vector2(0,1).rotate(self.rotation + 10) * PLAYER_SHOOT_SPEED
-        bullet5 = Shot(self.position.x, self.position.y)
-        bullet5.velocity = pygame.Vector2(0,1).rotate(self.rotation + 20) * PLAYER_SHOOT_SPEED
+        shots = []
+        angles = [-20, -10, 0, 10, 20]  # Angles for the spread of the bullets
+        for angle in angles:
+            bullet = Shot(self.position.x, self.position.y)
+            bullet.velocity = pygame.Vector2(0, 1).rotate(self.rotation + angle) * PLAYER_SHOOT_SPEED
+        
         self.shotgun_timer = PLAYER_SHOTGUN_COOLDOWN

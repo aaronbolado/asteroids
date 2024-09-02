@@ -21,12 +21,26 @@ def main():
     menu = pygame_menu.Menu('Welcome', 400, 300,
                        theme=pygame_menu.themes.THEME_BLUE)
 
-    menu.add.button('Play', start_the_game)
+    menu.add.button('Play', game_state)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(screen)
+
+def game_state():
+    in_game = True
+    while True:
+        if in_game:
+            # Game loop
+            in_game = game_loop()
+        else:
+            # Menu loop
+            in_game = menu_loop()
+
+        if not in_game:
+            break
+
     pygame.quit()
     
-def start_the_game():
+def game_loop():
     dt = 0
     
     # Groups for objects
@@ -48,7 +62,11 @@ def start_the_game():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                return False
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            return menu_loop()
 
         screen.fill("black")
         for thing in updatable:
@@ -69,6 +87,23 @@ def start_the_game():
 
         # Limit framerate to 60 FPS
         dt = game_clock.tick(60) / 1000
+        
+    return True
+
+def menu_loop():
+    menu = pygame_menu.Menu('Welcome', 400, 300,
+                            theme=pygame_menu.themes.THEME_BLUE)
+
+    menu.add.button('Restart', game_loop)
+    menu.add.button('Quit', pygame_menu.events.EXIT)
+
+    menu_active = True
+    while menu_active:
+        menu.update(pygame.event.get())
+        menu.draw(screen)
+        pygame.display.flip()
+        
+    return True
 
 if __name__ == "__main__":
     main()
