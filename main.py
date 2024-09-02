@@ -79,12 +79,20 @@ def game_loop():
             thing.update(dt)
 
         for asteroid in asteroids:
-            if asteroid.collision_check(player) == True:
+            if asteroid.collision_check(player) == True and player.immune_timer > 0:
+                asteroid.split()
+            elif asteroid.collision_check(player) == True and player.immune_timer <= 0:
                 main()
+
             for bullet in shots:
                 if asteroid.collision_check(bullet) == True:
                     asteroid.split()
                     bullet.kill()
+
+        for buff in buffs:
+            if buff.collision_check(player) == True:
+                buff.kill()
+                player.apply_buff(buff)
             
         for thing in drawable:
             thing.draw(screen)

@@ -1,5 +1,6 @@
 import pygame
 from constants import *
+from buffs import *
 from circleshape import CircleShape
 from shot import Shot
 
@@ -9,6 +10,7 @@ class Player(CircleShape):
         self.rotation = 0
         self.shoot_timer = 0
         self.shotgun_timer = 0
+        self.immune_timer = 0
     
     # in the player class
     def triangle(self):
@@ -45,6 +47,7 @@ class Player(CircleShape):
 
         self.shotgun_timer -= dt
         self.shoot_timer -= dt
+        self.immune_timer -= dt
     
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -63,3 +66,7 @@ class Player(CircleShape):
             bullet.velocity = pygame.Vector2(0, 1).rotate(self.rotation + angle) * PLAYER_SHOOT_SPEED
         
         self.shotgun_timer = PLAYER_SHOTGUN_COOLDOWN
+
+    def apply_buff(self, buff):
+        if type(buff) is Shield:
+           self.immune_timer = SHIELD_TIMER               
