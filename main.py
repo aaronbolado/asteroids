@@ -1,23 +1,34 @@
-import sys
 import pygame
+import pygame_menu
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from constants import *
 
+# Initialize pygame
+pygame.init()
+
+# Screen display
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+game_clock = pygame.time.Clock()
+
 def main():
     print("Starting asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
     
-    # Screen display
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    game_clock = pygame.time.Clock()
+    menu = pygame_menu.Menu('Welcome', 400, 300,
+                       theme=pygame_menu.themes.THEME_BLUE)
+
+    menu.add.button('Play', start_the_game)
+    menu.add.button('Quit', pygame_menu.events.EXIT)
+    menu.mainloop(screen)
+    pygame.quit()
+    
+def start_the_game():
     dt = 0
-
-
+    
     # Groups for objects
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -45,7 +56,7 @@ def main():
 
         for asteroid in asteroids:
             if asteroid.collision_check(player) == True:
-                sys.exit("Game over!")
+                main()
             for bullet in shots:
                 if asteroid.collision_check(bullet) == True:
                     asteroid.split()
