@@ -10,10 +10,16 @@ from buffs import *
 
 # Initialize pygame
 pygame.init()
+pygame.font.get_init()
+
 
 # Screen display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 game_clock = pygame.time.Clock()
+score = 0
+
+font_name = pygame.font.match_font('arial')
+TEXT_FONT = pygame.font.Font(font_name, 32)
 
 def main():
     print("Starting asteroids!")
@@ -42,8 +48,19 @@ def game_state():
 
     pygame.quit()
     
+def display_ui(score):
+    # Render the text with the font
+    score_text = TEXT_FONT.render(f'Score: {score}', True, (255, 255, 255))
+    
+    # Position the text at the center top of the screen
+    text_rect = score_text.get_rect(center=(screen.get_width() / 2, 50))
+    
+    # Blit the text onto the window at the specified position
+    screen.blit(score_text, text_rect)
+
 def game_loop():
     dt = 0
+    score = 0
     
     # Groups for objects
     updatable = pygame.sprite.Group()
@@ -70,23 +87,27 @@ def game_loop():
             if event.type == pygame.QUIT:
                 return False
 
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             return menu_loop()
 
         screen.fill("black")
+        display_ui(score)
+
         for thing in updatable:
             thing.update(dt)
 
         for asteroid in asteroids:
             if asteroid.collision_check(player) == True and player.immune_timer > 0:
-                asteroid.split()
+                score += asteroid.split()
+
             elif asteroid.collision_check(player) == True and player.immune_timer <= 0:
                 main()
 
             for bullet in shots:
                 if asteroid.collision_check(bullet) == True:
-                    asteroid.split()
+                    score += asteroid.split()
                     bullet.kill()
 
         for buff in buffs:
