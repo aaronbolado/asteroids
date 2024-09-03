@@ -1,10 +1,8 @@
 ## ASTEROIDS ##
--
 Simple game project from boot.dev with personal modifications to practice OOP concepts using python.
 
 
 ## BASE GAME ## 
--
 - Asteroid spawns randomly
 - Player can move and shoot asteroids
 - Game ends when player gets hit by asteroid
