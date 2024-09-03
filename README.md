@@ -11,3 +11,10 @@ Simple game project from boot.dev with personal modifications to practice OOP co
 - Shield buff which protects players from collisions and destroys asteroids in the process
 - Shotgun shot with spread bullets
 - Scoring system with high score tracking
+
+## IMPROVEMENTS ##
+- More buffs
+- More guns
+- Better menu and UI
+- File and variable naming convention
+- Proper place to declare variables
