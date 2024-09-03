@@ -12,14 +12,14 @@ from buffs import *
 pygame.init()
 pygame.font.get_init()
 
+font_name = pygame.font.match_font('arial')
+TEXT_FONT = pygame.font.Font(font_name, 32)
+SCORES_FILE = "scores.txt"
 
 # Screen display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 game_clock = pygame.time.Clock()
-score = 0
 
-font_name = pygame.font.match_font('arial')
-TEXT_FONT = pygame.font.Font(font_name, 32)
 
 def main():
     print("Starting asteroids!")
@@ -32,6 +32,37 @@ def main():
     menu.add.button('Play', game_state)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(screen)
+
+def find_highest_score(filename):
+    try:
+        with open(filename, 'r') as file:
+            numbers = []
+
+            for line in file:
+                try:
+                    # Convert the line to an integer and add to the list
+                    number = int(line.strip())
+                    numbers.append(number)
+                except ValueError:
+                    # If the conversion fails, skip the value
+                    print(f"Skipping non-integer value: {line.strip()}")
+
+            if numbers:
+                return max(numbers)
+            else:
+                return None
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+        return None
+
+def add_new_score(filename, score):
+    try:
+        with open(filename, 'a') as file:
+            file.write(f"{score}\n")
+
+    except IOError:
+        print(f"An error occurred while creating the file '{filename}'.")
+        return None
 
 def game_state():
     in_game = True
@@ -48,19 +79,23 @@ def game_state():
 
     pygame.quit()
     
-def display_ui(score):
+def display_ui(score, high_score):
     # Render the text with the font
     score_text = TEXT_FONT.render(f'Score: {score}', True, (255, 255, 255))
+    high_score_text = TEXT_FONT.render(f'High Score: {high_score}', True, (255, 255, 255))
     
     # Position the text at the center top of the screen
-    text_rect = score_text.get_rect(center=(screen.get_width() / 2, 50))
+    score_text_rect = score_text.get_rect(center=(screen.get_width() / 2, 50))
+    high_score_text_rect = score_text.get_rect(center=(screen.get_width() / 2, 25))
     
     # Blit the text onto the window at the specified position
-    screen.blit(score_text, text_rect)
+    screen.blit(score_text, score_text_rect)
+    screen.blit(high_score_text, high_score_text_rect)
 
 def game_loop():
     dt = 0
     score = 0
+    high_score = find_highest_score(SCORES_FILE)
     
     # Groups for objects
     updatable = pygame.sprite.Group()
@@ -90,10 +125,11 @@ def game_loop():
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
+            add_new_score(SCORES_FILE, score)
             return menu_loop()
 
         screen.fill("black")
-        display_ui(score)
+        display_ui(score, high_score)
 
         for thing in updatable:
             thing.update(dt)
@@ -103,6 +139,7 @@ def game_loop():
                 score += asteroid.split()
 
             elif asteroid.collision_check(player) == True and player.immune_timer <= 0:
+                add_new_score(SCORES_FILE, score)
                 main()
 
             for bullet in shots:
@@ -137,7 +174,7 @@ def menu_loop():
         menu.update(pygame.event.get())
         menu.draw(screen)
         pygame.display.flip()
-        
+    
     return True
 
 if __name__ == "__main__":
